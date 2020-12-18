@@ -7,7 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
-#include <vector>
+#include <list>
+#include <random>
 
 using namespace std;
 
@@ -23,12 +24,14 @@ class DSBoard {
 		bool winStatus = false;
 		int die1 = -1;
 		int die2 = -1;
+		random_device r;
 		//game won or not
-		
 		
 	public:
 		DSBoard();
 		~DSBoard();
+		const DSBoard& operator=(const DSBoard &);
+		
 		bool hitTile(vector<tile> choice, vector<int> t);
 		void roll();
 		
@@ -37,10 +40,10 @@ class DSBoard {
 		bool gameWon();
 		void printDie();
 		void printBoard();
-		
+		void printTiles();
 		
 		void printDieTS();
-		void printTiles();
+		
 		
 		
 };
