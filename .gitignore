@@ -5,3 +5,7 @@
 /.idea/vcs.xml
 /.idea/.gitignore
 /.idea/DoubleShutter.iml
+/DoubleShutter
+/DSBoard.o
+/main.o
+/parseHelper.o
