@@ -7,11 +7,11 @@
 using namespace std;
 
 /**
- *
+ * This initializes the vectors containing both of the tiles
  */
 DSBoard::DSBoard() {
 	for(int i = 0; i < 9; i++){
-		front_tile.push_back(i+1);
+		front_tile.push_back(i + 1);
 		back_tile.push_back(9 - i);
 	}
 }
@@ -22,38 +22,61 @@ DSBoard::DSBoard() {
  * knocked down until the front tile at that specific index is knocked down.  Attempting to doing so will return from
  * the function early with a false boolean.
  *
+ * The checks for a valid move set is in the private helper method "checkValidMove".
+ *
  * @param choice
- * @param t
+ *  the choice of front or back tile
+ * @param tile
+ *  the tile number to knock over
+ * @return
+ *  true or false if a valid move set was input
  */
-bool DSBoard::hitTile(vector<tile> choice, vector<int> t) {
+bool DSBoard::hitTile(const vector<tile>& choice, const vector<int>& tile) {
+	return checkValidMove(choice, tile);
+}
+
+/**
+ * This is the valid move checker.  It copies over the current board and then simulates the move set entered by
+ * the user.  If the simulated game is invalid, then it will return false.  If it runs through the game without any
+ * issues, then it will copy the simulated board to the instance variables and return true.
+ *
+ * @param choice
+ * @param tile
+ * @return
+ */
+bool DSBoard::checkValidMove(const vector<tile> &  choice, const vector<int> & tile) {
+	//TODO there has to be an easier method
+	vector<int> tempFront(this->front_tile.size());
+	vector<int> tempBack(this->back_tile.size());
+	for(int i = 0; i < this->front_tile.size(); i ++){
+		tempFront[i] = this->front_tile[i];
+		tempBack[i] = this->back_tile[i];
+	}
 	int sum = 0;
-	for(int i : t){
+	for(int i : tile){
 		sum += i;
 	}
 	if(sum != (die1 + die2)){
 		return false;
 	}
 	else{
-		for(int i = 0; i < t.size(); i++){
-			tile tempChoice = choice[i];
-			int tempNum = t[i];
+		for(int i = 0; i < tile.size(); i++){
+			tile_e tempChoice = choice[i];//for some reason this won't let me do just "tile" idk
+			int tempNum = tile[i];
 			if(tempChoice == back){
-				if(front_tile[(9 - tempNum)] == 0){
-					back_tile[tempNum - 1] = 0;
-				}
-				else{
-					return false;
-				}
+				if(tempFront[9 - tempNum] == 0 && tempBack[9 - tempNum] != 0) tempBack[9 - tempNum] = 0;
+				else return false;
 			}
 			else{
-				if(front_tile[tempNum - 1] != 0){
-					front_tile[tempNum - 1] = 0;
-				}
-				else{
-					return false;
-				}
+				if(tempFront[tempNum - 1] != 0) tempFront[tempNum - 1] = 0;
+				else return false;
 			}
 		}
+	}
+	//TODO change this to pointers so you can just make the instance variables equal to the temp board values
+	for(int i = 0; i < this->front_tile.size(); i ++){
+		this->front_tile[i] = tempFront[i];
+		this->back_tile[i] = tempBack[i];
 	}
 	return true;
 }
@@ -64,17 +87,12 @@ bool DSBoard::hitTile(vector<tile> choice, vector<int> t) {
 void DSBoard::roll() {
 	die1 = this->r()%6 + 1;
 	die2 = this->r()%6 + 1;
+	//TODO check for if any valid move can be played.  If not game is finished and the game is lost.
+	//TODO make this so that if the total number of tiles are less than 6 then only one die can be cast
+	//TODO make this so that there is score being kept
 }
 
-/**
- *
- * @param choice
- * @param t
- * @return
- */
-//bool DSBoard::checkValidMove(tile choice, int * t) {
-//	return false;
-//}
+
 
 /**
  * Returns whether the game can still be played or not.
@@ -100,13 +118,13 @@ void DSBoard::printBoard() {
  *
  */
 void DSBoard::printTiles() {
+	//TODO change this
 	cout << " ";
 	for(int i : back_tile){
 		if(i != 0 ) cout << "|" << i << "| ";
 		else cout << "|X| ";
 	}
 	cout << endl;
-//	cout << "|";
 	for(int i : front_tile){
 		if(i != 0 ) cout << "|" << i << "| ";
 		else cout << "|X| ";
@@ -183,6 +201,11 @@ DSBoard::~DSBoard() {
 
 }
 
+/**
+ *
+ *
+ * @return
+ */
 bool DSBoard::gameWon() {
 	for(int i = 0; i < front_tile.size(); i++){
 		int temp1 = front_tile[i];
@@ -209,6 +232,8 @@ void DSBoard::printDieTS() {
 	cout << "Die1: " << this->die1 << " Die2: " << this->die2 << endl;
 	
 }
+
+
 
 
 
